@@ -27,7 +27,7 @@ What you can learn out of it?? Follow through:
 etc..
 
 
-[![Start Screen](https://github.com/embeddedcrab/STM32F429_Disco/blob/master/VID_20200609_124605.jpg)](https://github.com/embeddedcrab/STM32F429_Disco/blob/master/VID_20200609_124605.mp4)
+Video Link -> https://github.com/embeddedcrab/STM32F429_Disco/blob/master/VID_20200609_124605.mp4
 
 
 Happy to Help and Share 😊
