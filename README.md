@@ -1,15 +1,15 @@
 
-### TouchGFX application with Logger on STM32F429 Disco Board
+# TouchGFX application with Logger on STM32F429 Disco Board
 
 This project includes TouchGFX application and Logger fucntionality using FreeRTOS Utilities.
 
-# * GUI application code base has been generated using STM TouchGFX software and further updations has been done according to application. *
+### * GUI application code base has been generated using STM TouchGFX software and further updations has been done according to application. *
 
 GUI applications contains following:
 1. Start screen with an Analog Clock to show time
 2. Home screen with a wallpaper and a Digital clock
 
-User can swicth between two screens using touch buttons available on screen or using the sliding gesture.
+> User can swicth between two screens using touch buttons available on screen or using the sliding gesture.
 
 Others tasks which application is doing are as follows:
 1. Led blinking
