@@ -14,6 +14,7 @@ GUI applications contains following:
 Others tasks which application is doing are as follows:
 1. Led blinking
 2. Logging activities using Logger class which uses UART in DMA mode to transmit data
+3. Logging Test tasks which tests the Logger functionality with other running tasks
 
 
 As TouchGFX code uses FreeRTOS as RTOS platform other activities are also based on RTOS platform.
