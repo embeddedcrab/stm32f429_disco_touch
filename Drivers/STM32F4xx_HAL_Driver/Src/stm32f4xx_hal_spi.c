@@ -345,7 +345,7 @@ HAL_StatusTypeDef HAL_SPI_Init(SPI_HandleTypeDef *hspi)
   if (hspi->State == HAL_SPI_STATE_RESET)
   {
     /* Allocate lock resource and initialize it */
-    hspi->Lock = HAL_UNLOCKED;
+	__HAL_UNLOCK(hspi);
 
 #if (USE_HAL_SPI_REGISTER_CALLBACKS == 1U)
     /* Init the SPI Callback settings */

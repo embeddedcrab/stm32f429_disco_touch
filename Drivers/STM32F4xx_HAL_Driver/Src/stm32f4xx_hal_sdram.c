@@ -169,7 +169,7 @@ HAL_StatusTypeDef HAL_SDRAM_Init(SDRAM_HandleTypeDef *hsdram, FMC_SDRAM_TimingTy
   if(hsdram->State == HAL_SDRAM_STATE_RESET)
   {  
     /* Allocate lock resource and initialize it */
-    hsdram->Lock = HAL_UNLOCKED;
+	__HAL_UNLOCK(hsdram);
 #if (USE_HAL_SDRAM_REGISTER_CALLBACKS == 1)
     if(hsdram->MspInitCallback == NULL)
     {

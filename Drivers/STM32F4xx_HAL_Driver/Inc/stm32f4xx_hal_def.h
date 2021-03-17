@@ -31,6 +31,8 @@
 #include "Legacy/stm32_hal_legacy.h"
 #include <stddef.h>
 
+#include "sync.h"
+
 /* Exported types ------------------------------------------------------------*/
 
 /** 
@@ -44,14 +46,40 @@ typedef enum
   HAL_TIMEOUT  = 0x03U
 } HAL_StatusTypeDef;
 
-/** 
-  * @brief  HAL Lock structures definition  
+
+#if (USE_RTOS == 1U)
+
+#define HAL_UNLOCKED		0x00
+#define HAL_LOCKED			0x01
+
+/**
+  * @brief  HAL Lock structures definition
   */
-typedef enum 
+typedef struct HAL_LockTypeDef_
+{
+    union
+    {
+    	struct
+		{
+            unsigned char lock_bit	: 1;
+            unsigned char sync_bit	: 1;
+            unsigned char write_bit	: 1;
+            unsigned char read_bit	: 1;
+            unsigned char			: 4;
+		};
+        unsigned char lock_byte;
+    };
+} HAL_LockTypeDef;
+#else
+/**
+  * @brief  HAL Lock Enum definition
+  */
+typedef enum
 {
   HAL_UNLOCKED = 0x00U,
-  HAL_LOCKED   = 0x01U  
+  HAL_LOCKED   = 0x01U
 } HAL_LockTypeDef;
+#endif
 
 /* Exported macro ------------------------------------------------------------*/
 
@@ -85,9 +113,25 @@ typedef enum
   */
 #define __HAL_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = 0U)
 
+
 #if (USE_RTOS == 1U)
-  /* Reserved for future use */
-  #error "USE_RTOS should be 0 in the current HAL release"
+/* Macros to Lock Bit of Lock variable */
+#define GET_BIT_LOCK_HAL(__LOCK__)											\
+{																			\
+	long status = -1;														\
+	do																		\
+	{																		\
+		status = lock_bit( &((__LOCK__).lock_byte) );						\
+	}while( status != 0 );													\
+}
+
+/* Release Bit Lock */
+#define RELEASE_BIT_LOCK_HAL(__LOCK__)	unlock_bit( &((__LOCK__).lock_byte) );
+
+
+#define __HAL_LOCK(__HANDLE__)		GET_BIT_LOCK_HAL((__HANDLE__)->Lock)
+
+#define __HAL_UNLOCK(__HANDLE__)	RELEASE_BIT_LOCK_HAL((__HANDLE__)->Lock)
 #else
   #define __HAL_LOCK(__HANDLE__)                                           \
                                 do{                                        \
@@ -106,6 +150,7 @@ typedef enum
                                       (__HANDLE__)->Lock = HAL_UNLOCKED;    \
                                     }while (0U)
 #endif /* USE_RTOS */
+
 
 #if defined ( __GNUC__ ) && !defined (__CC_ARM) /* GNU Compiler */
   #ifndef __weak

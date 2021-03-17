@@ -162,12 +162,12 @@ uint32_t Spi5Timeout = SPI5_TIMEOUT_MAX; /*<! Value of Timeout when SPI communic
 
 
 /* UART Channel 4 Handle */
-//extern UART_HandleTypeDef UART4_Handle;
+extern UART_HandleTypeDef UART4_Handle;
 extern void UART4_HAL_init( void );
 
 
 #ifdef LOGGER_TEST
-extern void logger_test_c( void );
+extern void thread_test( void );
 #endif
 
 }/* extern "C" ends */
@@ -258,9 +258,10 @@ int main(void)
 
 
   /**------- Logger Test -------**/
+
 #ifdef LOGGER_TEST
-  logger_test_c();
-//  LoggerTest_::init();
+  thread_test();
+  LoggerTest__::init();
 #endif
 
 

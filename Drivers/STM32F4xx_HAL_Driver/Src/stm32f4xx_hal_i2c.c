@@ -455,7 +455,7 @@ HAL_StatusTypeDef HAL_I2C_Init(I2C_HandleTypeDef *hi2c)
   if (hi2c->State == HAL_I2C_STATE_RESET)
   {
     /* Allocate lock resource and initialize it */
-    hi2c->Lock = HAL_UNLOCKED;
+	__HAL_UNLOCK(hi2c);
 
 #if (USE_HAL_I2C_REGISTER_CALLBACKS == 1)
     /* Init the I2C Callback settings */

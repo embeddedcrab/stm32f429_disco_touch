@@ -1,10 +1,3 @@
-/*
- * logger_test.h
- *
- *  Created on: 28-Aug-2020
- *      Author: hp
- */
-
 #ifndef LOGGER_TEST_H_
 #define LOGGER_TEST_H_
 
@@ -15,18 +8,18 @@
 #include <rtos_wrappers.h>
 
 
-class LoggerTest_
+class LoggerTest__
 {
 public:
 	static void init()
 	{
 		vSemaphoreCreateBinary( task_sem );
-		configASSERT( LoggerTest_::task_sem );
+		configASSERT( LoggerTest__::task_sem );
 		/* Create logger test Tasks */
-		RTOS_WRAPPER__::create( LoggerTest_::LoggerTest_Task1, (const char *)"LTest1", configMINIMAL_STACK_SIZE << 1, NULL, osPriorityBelowNormal, NULL );
-		RTOS_WRAPPER__::create( LoggerTest_::LoggerTest_Task2, (const char *)"LTest2", configMINIMAL_STACK_SIZE << 1, NULL, osPriorityBelowNormal, NULL );
-		RTOS_WRAPPER__::create( LoggerTest_::LoggerTest_Task3, (const char *)"LTest3", configMINIMAL_STACK_SIZE << 1, NULL, osPriorityBelowNormal, NULL );
-		RTOS_WRAPPER__::create( LoggerTest_::LoggerTest_Task4, (const char *)"LTest4", configMINIMAL_STACK_SIZE << 1, NULL, osPriorityBelowNormal, NULL );
+		RTOS_WRAPPER__::create( LoggerTest__::LoggerTest_Task1, (const char *)"LTest1", configMINIMAL_STACK_SIZE << 1, NULL, osPriorityNormal, NULL );
+		RTOS_WRAPPER__::create( LoggerTest__::LoggerTest_Task2, (const char *)"LTest2", configMINIMAL_STACK_SIZE << 1, NULL, osPriorityNormal, NULL );
+		RTOS_WRAPPER__::create( LoggerTest__::LoggerTest_Task3, (const char *)"LTest3", configMINIMAL_STACK_SIZE << 1, NULL, osPriorityNormal, NULL );
+		RTOS_WRAPPER__::create( LoggerTest__::LoggerTest_Task4, (const char *)"LTest4", configMINIMAL_STACK_SIZE << 1, NULL, osPriorityNormal, NULL );
 	}
 
 private:

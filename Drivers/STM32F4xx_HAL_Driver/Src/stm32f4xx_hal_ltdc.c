@@ -256,7 +256,7 @@ HAL_StatusTypeDef HAL_LTDC_Init(LTDC_HandleTypeDef *hltdc)
   if (hltdc->State == HAL_LTDC_STATE_RESET)
   {
     /* Allocate lock resource and initialize it */
-    hltdc->Lock = HAL_UNLOCKED;
+	__HAL_UNLOCK(hltdc);
     /* Init the low level hardware */
     HAL_LTDC_MspInit(hltdc);
   }

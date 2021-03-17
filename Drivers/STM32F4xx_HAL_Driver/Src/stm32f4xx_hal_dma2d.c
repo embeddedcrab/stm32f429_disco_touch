@@ -266,7 +266,7 @@ HAL_StatusTypeDef HAL_DMA2D_Init(DMA2D_HandleTypeDef *hdma2d)
   if(hdma2d->State == HAL_DMA2D_STATE_RESET)
   {
     /* Allocate lock resource and initialize it */
-    hdma2d->Lock = HAL_UNLOCKED;
+	__HAL_UNLOCK(hdma2d);
     /* Init the low level hardware */
     HAL_DMA2D_MspInit(hdma2d);
   }

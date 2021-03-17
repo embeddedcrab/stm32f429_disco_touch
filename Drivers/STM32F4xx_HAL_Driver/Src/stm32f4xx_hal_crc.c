@@ -106,7 +106,7 @@ HAL_StatusTypeDef HAL_CRC_Init(CRC_HandleTypeDef *hcrc)
   if (hcrc->State == HAL_CRC_STATE_RESET)
   {
     /* Allocate lock resource and initialize it */
-    hcrc->Lock = HAL_UNLOCKED;
+	__HAL_UNLOCK(hcrc);
     /* Init the low level hardware */
     HAL_CRC_MspInit(hcrc);
   }

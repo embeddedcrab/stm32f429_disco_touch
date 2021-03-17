@@ -1,5 +1,5 @@
 /******************************************************************************
-* Copyright (c) 2019 - Hemant Sharma - All Rights Reserved
+* Copyright (c) 2021 - Hemant Sharma - All Rights Reserved
 *
 * Feel free to use this Code at your own risk for your own purposes.
 *
@@ -28,6 +28,7 @@
 #include <cmsis_os.h>
 #include <semphr.h>
 #include <dri_mem.h>
+#include <sync.h>
 
 
 /******************************************************************************
@@ -87,12 +88,12 @@ extern "C"
 
 /******************************************************************************
  *
- * @brief	Class for Logger__ Instance
+ * @brief	Class Logger__
  *
- * \par<b>Description:</b><br>	This logger class can be interfaced with any
- * 	peripheral like; UART, SD Card, Network
+ * \par<b>Description:</b><br>	This logger class can be inherited for creating
+ * 	Logging using UART, SD Card or over Network
  *
- * 	<i>Imp Note:</i>	Initialization of peripheral is not taken care
+ * 	<i>Imp Note:</i>
  *
  ******************************************************************************/
 
@@ -101,38 +102,12 @@ class Logger__
 /* public members */
 public:
 
-	/** Constructors and Destructors */
-	explicit Logger__( void * p_channel_interface, const logger_out &comm_fcn )
-		: p_channel_( p_channel_interface ), p_fcn_comm_(comm_fcn)
-	{
-		if( (nullptr == p_channel_interface) || (nullptr == comm_fcn) )
-		{
-			for( ; ; )
-			{
-				__asm("NOP");
-			}
-		}
-		else
-		{
-			/* Class members initialization */
-			memset( (void *)buffer_, '\0', ::sg_logger_buffer_size );
-			index_ = 0;
-		}
-
-		/* Create semaphore for Logging */
-		vSemaphoreCreateBinary( xlog_event_sem );
-		xlog_tx_mutex = xSemaphoreCreateMutex();
-		configASSERT( xlog_event_sem );
-		configASSERT( xlog_tx_mutex );
-	}
-
-	virtual ~Logger__()
-	{
-		__asm("NOP");
-	}
-
+	Logger__(){}
 	Logger__( const Logger__& ) = delete;
 	Logger__& operator=( const Logger__& ) = delete;
+
+	virtual ~Logger__(){}
+
 
 	/******* API Member functions *******/
 
@@ -153,34 +128,148 @@ public:
 	 *
 	 */
 	/* Library dependencies */
-	Logger__& operator<<( const signed short& value );
-	Logger__& operator<<( const unsigned short& value );
+	virtual Logger__& operator<<( const signed short& value ) = 0;
+	virtual Logger__& operator<<( const unsigned short& value ) = 0;
 
-	Logger__& operator<<( const signed int& value );
-	Logger__& operator<<( const unsigned int& value );
+	virtual Logger__& operator<<( const signed int& value ) = 0;
+	virtual Logger__& operator<<( const unsigned int& value ) = 0;
 
-	Logger__& operator<<( const signed long& value );
-	Logger__& operator<<( const signed long long& value );
-	Logger__& operator<<( const unsigned long& value );
-	Logger__& operator<<( const unsigned long long& value );
+	virtual Logger__& operator<<( const signed long& value ) = 0;
+	virtual Logger__& operator<<( const signed long long& value ) = 0;
+	virtual Logger__& operator<<( const unsigned long& value ) = 0;
+	virtual Logger__& operator<<( const unsigned long long& value ) = 0;
 
-	Logger__& operator<<( const float& value );
-	Logger__& operator<<( const double& value );
-	Logger__& operator<<( const long double& value );
+	virtual Logger__& operator<<( const float& value ) = 0;
+	virtual Logger__& operator<<( const double& value ) = 0;
+	virtual Logger__& operator<<( const long double& value ) = 0;
 
-	/* Working fine without additional libraries */
-	Logger__& operator<<( const char& value );
-	Logger__& operator<<( const signed char& value );
-	Logger__& operator<<( const unsigned char& value );
+	virtual Logger__& operator<<( const char& value ) = 0;
+	virtual Logger__& operator<<( const signed char& value ) = 0;
+	virtual Logger__& operator<<( const unsigned char& value ) = 0;
 
-	Logger__& operator<<( const char * p_value );
-	Logger__& operator<<( const signed char * p_value );
-	Logger__& operator<<( const unsigned char * p_value );
+	virtual Logger__& operator<<( const char * p_value ) = 0;
+	virtual Logger__& operator<<( const signed char * p_value ) = 0;
+	virtual Logger__& operator<<( const unsigned char * p_value ) = 0;
+
+
+	virtual Logger__& operator<<( Logger__& (*)(Logger__&) )
+	{
+		/* Call _write function to send data */
+		return *this;
+	}
+
+
+/* private members */
+private:
+
+
+/* protected members, if any */
+protected:
+
+	__attribute__((always_inline))virtual inline void _copy( void *p_dest, const void *p_src, size_t size )
+	{
+		memcpy( p_dest, p_src, size );
+	}
+
+	virtual void _write( unsigned char *p_data, unsigned short length )
+	{
+		(void) p_data;
+		(void) length;
+
+		/* Send buffer data to any terminal */
+	}
+};
+
+
+/*---------------------------------------------------------------------------*/
+
+
+/******************************************************************************
+ *
+ * @brief	Class UART_Logger__
+ *
+ * \par<b>Description:</b><br>
+ *
+ * 	<i>Imp Note:</i>
+ *
+ ******************************************************************************/
+
+class UART_Logger__
+{
+/* public members */
+public:
+
+	UART_Logger__() = delete;
+	UART_Logger__( const UART_Logger__& ) = delete;
+	UART_Logger__& operator=( const UART_Logger__& ) = delete;
+
+	/** Constructors and Destructors */
+	explicit UART_Logger__( void * p_channel_interface, const logger_out &comm_fcn )
+		: p_channel_( p_channel_interface ), p_fcn_comm_(comm_fcn)
+	{
+		if( (nullptr == p_channel_interface) || (nullptr == comm_fcn) )
+		{
+			for( ; ; )
+			{
+				__asm("NOP");
+			}
+		}
+		else
+		{
+			/* Class members initialization */
+			memset( (void *)buffer_, '\0', ::sg_logger_buffer_size );
+			memset( (void* )&log_buffer_mutex_, 0, sizeof( unsigned char ) );
+			index_ = 0;
+		}
+
+		/* Create semaphore for Logging */
+		if( (NULL == xlog_event_sem) && (NULL == xlog_tx_mutex) )
+		{
+			vSemaphoreCreateBinary( xlog_event_sem );
+			xlog_tx_mutex = xSemaphoreCreateMutex();
+			configASSERT( xlog_event_sem );
+			configASSERT( xlog_tx_mutex );
+		}
+	}
+
+	virtual ~UART_Logger__()
+	{
+		free( xlog_event_sem );
+		free( xlog_tx_mutex );
+		xlog_event_sem = NULL;
+		xlog_tx_mutex = NULL;
+		p_channel_ = nullptr;
+		p_fcn_comm_ = nullptr;
+	}
+
+	virtual UART_Logger__& operator<<( const signed short& value );
+	virtual UART_Logger__& operator<<( const unsigned short& value );
+
+	virtual UART_Logger__& operator<<( const signed int& value );
+	virtual UART_Logger__& operator<<( const unsigned int& value );
+
+	virtual UART_Logger__& operator<<( const signed long& value );
+	virtual UART_Logger__& operator<<( const signed long long& value );
+	virtual UART_Logger__& operator<<( const unsigned long& value );
+	virtual UART_Logger__& operator<<( const unsigned long long& value );
+
+	virtual UART_Logger__& operator<<( const float& value );
+	virtual UART_Logger__& operator<<( const double& value );
+	virtual UART_Logger__& operator<<( const long double& value );
+
+	virtual UART_Logger__& operator<<( const char& value );
+	virtual UART_Logger__& operator<<( const signed char& value );
+	virtual UART_Logger__& operator<<( const unsigned char& value );
+
+	virtual UART_Logger__& operator<<( const char * p_value );
+	virtual UART_Logger__& operator<<( const signed char * p_value );
+	virtual UART_Logger__& operator<<( const unsigned char * p_value );
+
 
 	/* Functions for endl functionality,
 	 * Which is responsible to trigger the send operation
 	 * */
-	static Logger__& endl( Logger__& stream )
+	static UART_Logger__& endl( UART_Logger__& stream )
 	{
 		return stream;
 	}
@@ -190,27 +279,7 @@ public:
 	 *
 	 * <i>Imp Note:</i> For every transfer of data buffers and parameters needs to be reset for fresh transfer
 	 * */
-	virtual Logger__& operator<<( Logger__& end(Logger__&) )
-	{
-		/* Write data to hw driver */
-		_write( (unsigned char *)buffer_, index_ );
-		/* Wait for data transfer completion using Semaphore */
-		if( xSemaphoreTake( xlog_event_sem, pdMS_TO_TICKS(200) ) != pdPASS )
-		{
-			/* If data sent confirmation is not there then take it into next cycle of transmission,
-			 * But if data goes beyond buffer size then buffer will be overwritten.
-			 * Buffer size is kept according to embedded applications and shall work fine. */
-			/* for Debugging only */
-			__asm("NOP");/* Oops, Data not reliably sent! */
-		}
-		else
-		{
-			memset( (void *)buffer_, '\0', ::sg_logger_buffer_size );
-			index_ = 0;
-		}
-		/* Return object reference */
-		return *this;
-	}
+	virtual UART_Logger__& operator<<( UART_Logger__& (*)(UART_Logger__&) );
 
 
 	/* Write function which could be called from C file functions */
@@ -225,16 +294,17 @@ private:
 
 	unsigned char buffer_[::sg_logger_buffer_size];
 	unsigned short index_;
+	volatile sync_mutex_t log_buffer_mutex_;/* Will take 2 bytes of memory (space!) here */
 
+/* protected members, if any */
+protected:
 
-	/******* Private Member Functions *******/
-
-	__attribute__((always_inline))inline void _copy( void *p_dest, const void *p_src, size_t size )
+	__attribute__((always_inline))virtual inline void _copy( void *p_dest, const void *p_src, size_t size )
 	{
 		memcpy( p_dest, p_src, size );
 	}
 
-	virtual void _write( unsigned char *p_data, unsigned short length )
+	void _write( unsigned char *p_data, unsigned short length )
 	{
 		BaseType_t mutex_ret = pdFALSE;
 		/* Take Mutex */
@@ -251,24 +321,20 @@ private:
 		}
 	}
 
-
-/* protected members, if any */
-protected:
-
 };
 
 
 /******************************************************************************
 * Variables
 *******************************************************************************/
-extern Logger__ logger;
+extern UART_Logger__ logger;
 
 
 /* Can move it to source file also! */
-void Logger__::write( unsigned char *p_data, unsigned short length )
+void UART_Logger__::write( unsigned char *p_data, unsigned short length )
 {
 	const void *p_object = &logger;
-	((Logger__*)p_object)->_write( p_data, length );
+	((UART_Logger__*)p_object)->_write( p_data, length );
 	/* Wait for Semaphore for this much time at-least and move on!(taken for test only) */
 	xSemaphoreTake( xlog_event_sem, pdMS_TO_TICKS(200) );
 }

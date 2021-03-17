@@ -279,7 +279,7 @@ HAL_StatusTypeDef HAL_TIM_Base_Init(TIM_HandleTypeDef *htim)
   if (htim->State == HAL_TIM_STATE_RESET)
   {
     /* Allocate lock resource and initialize it */
-    htim->Lock = HAL_UNLOCKED;
+	__HAL_UNLOCK(htim);
 
 #if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
     /* Reset interrupt callbacks to legacy weak callbacks */
@@ -611,7 +611,7 @@ HAL_StatusTypeDef HAL_TIM_OC_Init(TIM_HandleTypeDef *htim)
   if (htim->State == HAL_TIM_STATE_RESET)
   {
     /* Allocate lock resource and initialize it */
-    htim->Lock = HAL_UNLOCKED;
+	__HAL_UNLOCK(htim);
 
 #if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
     /* Reset interrupt callbacks to legacy weak callbacks */
@@ -1184,7 +1184,7 @@ HAL_StatusTypeDef HAL_TIM_PWM_Init(TIM_HandleTypeDef *htim)
   if (htim->State == HAL_TIM_STATE_RESET)
   {
     /* Allocate lock resource and initialize it */
-    htim->Lock = HAL_UNLOCKED;
+	__HAL_UNLOCK(htim);
 
 #if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
     /* Reset interrupt callbacks to legacy weak callbacks */
@@ -1758,7 +1758,7 @@ HAL_StatusTypeDef HAL_TIM_IC_Init(TIM_HandleTypeDef *htim)
   if (htim->State == HAL_TIM_STATE_RESET)
   {
     /* Allocate lock resource and initialize it */
-    htim->Lock = HAL_UNLOCKED;
+	__HAL_UNLOCK(htim);
 
 #if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
     /* Reset interrupt callbacks to legacy weak callbacks */
@@ -2298,7 +2298,7 @@ HAL_StatusTypeDef HAL_TIM_OnePulse_Init(TIM_HandleTypeDef *htim, uint32_t OnePul
   if (htim->State == HAL_TIM_STATE_RESET)
   {
     /* Allocate lock resource and initialize it */
-    htim->Lock = HAL_UNLOCKED;
+	__HAL_UNLOCK(htim);
 
 #if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
     /* Reset interrupt callbacks to legacy weak callbacks */
@@ -2623,7 +2623,7 @@ HAL_StatusTypeDef HAL_TIM_Encoder_Init(TIM_HandleTypeDef *htim,  TIM_Encoder_Ini
   if (htim->State == HAL_TIM_STATE_RESET)
   {
     /* Allocate lock resource and initialize it */
-    htim->Lock = HAL_UNLOCKED;
+	__HAL_UNLOCK(htim);
 
 #if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
     /* Reset interrupt callbacks to legacy weak callbacks */

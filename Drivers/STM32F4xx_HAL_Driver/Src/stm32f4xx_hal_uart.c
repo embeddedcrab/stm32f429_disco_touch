@@ -339,7 +339,7 @@ HAL_StatusTypeDef HAL_UART_Init(UART_HandleTypeDef *huart)
   if (huart->gState == HAL_UART_STATE_RESET)
   {
     /* Allocate lock resource and initialize it */
-    huart->Lock = HAL_UNLOCKED;
+	__HAL_UNLOCK(huart);
 
 #if (USE_HAL_UART_REGISTER_CALLBACKS == 1)
     UART_InitCallbacksToDefault(huart);
@@ -405,7 +405,7 @@ HAL_StatusTypeDef HAL_HalfDuplex_Init(UART_HandleTypeDef *huart)
   if (huart->gState == HAL_UART_STATE_RESET)
   {
     /* Allocate lock resource and initialize it */
-    huart->Lock = HAL_UNLOCKED;
+	__HAL_UNLOCK(huart);
 
 #if (USE_HAL_UART_REGISTER_CALLBACKS == 1)
     UART_InitCallbacksToDefault(huart);
@@ -481,7 +481,7 @@ HAL_StatusTypeDef HAL_LIN_Init(UART_HandleTypeDef *huart, uint32_t BreakDetectLe
   if (huart->gState == HAL_UART_STATE_RESET)
   {
     /* Allocate lock resource and initialize it */
-    huart->Lock = HAL_UNLOCKED;
+	__HAL_UNLOCK(huart);
 
 #if (USE_HAL_UART_REGISTER_CALLBACKS == 1)
     UART_InitCallbacksToDefault(huart);
@@ -563,7 +563,7 @@ HAL_StatusTypeDef HAL_MultiProcessor_Init(UART_HandleTypeDef *huart, uint8_t Add
   if (huart->gState == HAL_UART_STATE_RESET)
   {
     /* Allocate lock resource and initialize it */
-    huart->Lock = HAL_UNLOCKED;
+	__HAL_UNLOCK(huart);
 
 #if (USE_HAL_UART_REGISTER_CALLBACKS == 1)
     UART_InitCallbacksToDefault(huart);

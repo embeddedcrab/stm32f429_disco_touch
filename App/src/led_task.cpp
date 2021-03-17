@@ -72,7 +72,7 @@
 /**
  * @function
  *
- * @brief		LED Task iniitalization function
+ * @brief		LED Task initialization function
  *
  * <i>Imp Note:</i>
  */

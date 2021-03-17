@@ -281,7 +281,7 @@ HAL_StatusTypeDef HAL_RTC_Init(RTC_HandleTypeDef *hrtc)
   if(hrtc->State == HAL_RTC_STATE_RESET)
   {
     /* Allocate lock resource and initialize it */
-    hrtc->Lock = HAL_UNLOCKED;
+	__HAL_UNLOCK(hrtc);
 
     /* Initialize RTC MSP */
     HAL_RTC_MspInit(hrtc);

@@ -149,7 +149,7 @@ HAL_StatusTypeDef HAL_TIMEx_HallSensor_Init(TIM_HandleTypeDef *htim, TIM_HallSen
   if (htim->State == HAL_TIM_STATE_RESET)
   {
     /* Allocate lock resource and initialize it */
-    htim->Lock = HAL_UNLOCKED;
+	__HAL_UNLOCK(htim);
 
 #if (USE_HAL_TIM_REGISTER_CALLBACKS == 1)
     /* Reset interrupt callbacks to legacy week callbacks */
